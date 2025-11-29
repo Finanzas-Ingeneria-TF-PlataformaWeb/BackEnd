@@ -1,0 +1,19 @@
+{
+  "Version": 1,
+  "Hash": "770SEdGiMyJFR9Ku+UJcX6MviS6ZgQIe51dinyar1eg=",
+  "Source": "MiVivienda.Api",
+  "BasePath": "_content/MiVivienda.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "MiVivienda.Api\\wwwroot",
+      "Source": "MiVivienda.Api",
+      "ContentRoot": "C:\\Users\\bryan\\RiderProjects\\MiVivienda\\MiVivienda.Api\\wwwroot\\",
+      "BasePath": "_content/MiVivienda.Api",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": []
+}
