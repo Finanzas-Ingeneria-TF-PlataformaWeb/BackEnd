@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MiVivienda.Api.Data;
 using MiVivienda.Api.Services;
+// Es probable que necesites agregar esto si usas Npgsql
+// using Npgsql.EntityFrameworkCore.PostgreSQL; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,13 +11,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// DbContext con SQLite
+// 🟢 DbContext con POSTGRESQL (Para Render) 🟢
+// El framework buscará la variable de entorno 'ConnectionStrings__DefaultConnection'
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(
+    options.UseNpgsql(
+        // Obtiene la cadena de la configuración (appsettings.json o Environment Variable)
         builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? "Data Source=mivivienda.db"));
+        // Como alternativa de desarrollo local, si la cadena no existe, usa una cadena local
+        ?? "Host=localhost;Database=local_db;Username=postgres;Password=yourpassword"));
 
-// CORS para el front en 5173 / 5174
+// ... (El resto del código se mantiene igual)
+
 const string AllowedOrigins = "_allowedOrigins";
 
 builder.Services.AddCors(options =>
@@ -54,7 +60,8 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    // Asegúrate de que tus migraciones son válidas para PostgreSQL.
+    db.Database.Migrate(); 
 }
 
 app.Run();
