@@ -23,7 +23,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy(AllowedOrigins, policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173", "http://localhost:5174")
+            .WithOrigins(
+                "http://localhost:5173",
+                "http://localhost:5174"
+                // Cuando tengas el front desplegado, agrega aquí:
+                // "https://tu-frontend.onrender.com"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -34,16 +39,14 @@ builder.Services.AddScoped<LoanCalculatorService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Habilitar Swagger SIEMPRE (Dev y Producción/Render)
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // CORS
 app.UseCors(AllowedOrigins);
 
-// NUEVO: servir archivos estáticos desde wwwroot
+// Servir archivos estáticos desde wwwroot
 app.UseStaticFiles();
 
 app.UseAuthorization();
