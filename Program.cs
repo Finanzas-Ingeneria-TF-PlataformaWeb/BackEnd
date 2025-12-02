@@ -15,21 +15,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")
         ?? "Data Source=mivivienda.db"));
 
-// CORS para el front en 5173 / 5174
-const string AllowedOrigins = "_allowedOrigins";
+// CORS (de momento abierto para probar desde cualquier origen)
+const string CorsPolicy = "CorsPolicy";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(AllowedOrigins, policy =>
+    options.AddPolicy(CorsPolicy, policy =>
     {
         policy
-            .WithOrigins(
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "https://frontend-fina.vercel.app"
-                // Cuando tengas el front desplegado, agrega aquí:
-                // "https://tu-frontend.onrender.com"
-            )
+            .AllowAnyOrigin()   // luego lo restringimos, por ahora nos ayuda a ver si el problema era CORS
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -40,14 +34,17 @@ builder.Services.AddScoped<LoanCalculatorService>();
 
 var app = builder.Build();
 
-// Habilitar Swagger SIEMPRE (Dev y Producción/Render)
+// Swagger (dev y prod)
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// CORS
-app.UseCors(AllowedOrigins);
+// Redirección a HTTPS (no hace daño en Render)
+app.UseHttpsRedirection();
 
-// Servir archivos estáticos desde wwwroot
+// CORS SIEMPRE antes de MapControllers
+app.UseCors(CorsPolicy);
+
+// Archivos estáticos (por si usas wwwroot)
 app.UseStaticFiles();
 
 app.UseAuthorization();
