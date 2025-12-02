@@ -15,7 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")
         ?? "Data Source=mivivienda.db"));
 
-// CORS (de momento abierto para probar desde cualquier origen)
+// === CORS ===
 const string CorsPolicy = "CorsPolicy";
 
 builder.Services.AddCors(options =>
@@ -23,7 +23,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy(CorsPolicy, policy =>
     {
         policy
-            .AllowAnyOrigin()   // luego lo restringimos, por ahora nos ayuda a ver si el problema era CORS
+            .WithOrigins(
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "https://frontend-fina.vercel.app",
+                "https://frontend-fina-e6z3e6e7o-saebryxns-projects.vercel.app"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -34,24 +39,20 @@ builder.Services.AddScoped<LoanCalculatorService>();
 
 var app = builder.Build();
 
-// Swagger (dev y prod)
+// Swagger siempre
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Redirección a HTTPS (no hace daño en Render)
-app.UseHttpsRedirection();
-
-// CORS SIEMPRE antes de MapControllers
+// CORS antes de los controladores
 app.UseCors(CorsPolicy);
 
-// Archivos estáticos (por si usas wwwroot)
 app.UseStaticFiles();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
-// Aplicar migraciones automáticamente al iniciar
+// Migraciones automáticas
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
