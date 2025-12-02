@@ -19,4 +19,6 @@ public class Property
     public string? ImageUrl { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string PropertyType { get; set; } = default!; // "apartment", "house", etc.
+
 }
